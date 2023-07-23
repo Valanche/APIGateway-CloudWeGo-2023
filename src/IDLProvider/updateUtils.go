@@ -111,7 +111,7 @@ func WatchIDLFiles() {
 		case event := <-idlWatcher.Events:
 			if event.Op.String() == "WRITE" {
 				fmt.Println(event.Name)
-				tftPath := idlDir + "/" + event.Name
+				tftPath := "./" + event.Name
 				UpdateIDLContents(tftPath)
 			}
 
