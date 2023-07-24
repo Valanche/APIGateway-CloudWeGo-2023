@@ -8,8 +8,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/cloudwego/kitex/pkg/generic"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -19,11 +21,18 @@ var IdlContents = make(map[string]string)
 // svcname : path
 var IdlPaths = make(map[string]string)
 
+// path : svcname
+var IdlNames = make(map[string]string)
+
 // svcname : *p
 var IdlProviders = make(map[string]*generic.ThriftContentProvider)
 
 var idlDir = "./idl"
 var svcRelation = idlDir + "/svcPath"
+
+// svcname : *M
+var idlMutexs = make(map[string]*sync.RWMutex)
+var svcMutex sync.Mutex
 
 func walkIdl(filename string, fi os.FileInfo, err error) error {
 
@@ -44,6 +53,7 @@ func walkIdl(filename string, fi os.FileInfo, err error) error {
 		fmt.Println(tftPath)
 
 		IdlContents[tftPath] = string(content)
+
 		file.Close()
 	}
 
@@ -63,8 +73,16 @@ func LoadIDLContents() {
 		if err != nil || io.EOF == err {
 			break
 		}
+
 		svcR := strings.Split(string(line), ", ")
+		if len(svcR) < 2 {
+			break
+		}
 		IdlPaths[svcR[0]] = svcR[1]
+		IdlNames[svcR[1]] = svcR[0]
+
+		var rwlock sync.RWMutex
+		idlMutexs[svcR[0]] = &rwlock
 
 	}
 	if err != nil {
@@ -80,6 +98,14 @@ func LoadIDLContents() {
 }
 
 func UpdateIDLContents(idlfilepath string) {
+
+	if _, ok := IdlContents[idlfilepath]; !ok {
+		klog.Infof("Unknown file (might be svcR) " + idlfilepath)
+		return
+	}
+	svcname := IdlNames[idlfilepath]
+
+	idlMutexs[svcname].RLock()
 	file, err := os.Open(idlfilepath)
 	if err != nil {
 		panic(err)
@@ -88,10 +114,15 @@ func UpdateIDLContents(idlfilepath string) {
 	if err != nil {
 		panic(err)
 	}
+	idlMutexs[svcname].RUnlock()
+	file.Close()
 
 	IdlContents[idlfilepath] = string(content)
-	IdlProviders[idlfilepath].UpdateIDL(string(content), IdlContents)
-	file.Close()
+	if IdlProviders[svcname] != nil {
+		IdlProviders[svcname].UpdateIDL(string(content), IdlContents)
+	}
+	fmt.Println("Updated: " + idlfilepath)
+
 }
 
 func WatchIDLFiles() {
@@ -112,7 +143,7 @@ func WatchIDLFiles() {
 			if event.Op.String() == "WRITE" {
 				fmt.Println(event.Name)
 				tftPath := "./" + event.Name
-				UpdateIDLContents(tftPath)
+				go UpdateIDLContents(tftPath)
 			}
 
 		case err := <-idlWatcher.Errors:

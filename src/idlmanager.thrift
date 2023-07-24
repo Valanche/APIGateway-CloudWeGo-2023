@@ -3,13 +3,13 @@ namespace go idlmanager
 
 struct AddServiceReq {
     1: string Name (api.body="svcname");
-    2: binary File (api.body="idlfile");
+    2: string FileName (api.body="idlfile");
+    3: binary FileContent (api.body="idlfile");
 }
 
 struct ChangeServiceReq {
     1: string Name (api.body="svcname");
-    2: string FileName (api.body="filename")
-    3: binary FileContent (api.body="idlfile")
+    2: binary FileContent (api.body="idlfile")
 }
 
 struct DeleteServiceReq {

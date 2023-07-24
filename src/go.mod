@@ -8,7 +8,7 @@ require (
 )
 
 require (
-	github.com/apache/thrift v0.13.0 // indirect
+	github.com/apache/thrift v0.13.0 // direct
 	github.com/chenzhuoyu/iasm v0.0.0-20230222070914-0b1b64b0e762 // indirect
 	github.com/choleraehyq/pid v0.0.16 // indirect
 	github.com/cloudwego/configmanager v0.2.0 // indirect

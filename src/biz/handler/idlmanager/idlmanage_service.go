@@ -24,13 +24,21 @@ func AddIDL(ctx context.Context, c *app.RequestContext) {
 
 	req.Name = httpReq.FormValue("svcname")
 	idlFile, _, err := httpReq.FormFile("idlfile")
-	defer idlFile.Close()
-	req.File, err = io.ReadAll(idlFile)
+
+	req.FileName = httpReq.MultipartForm.File["idlfile"][0].Filename
+	req.FileContent, err = io.ReadAll(idlFile)
+	idlFile.Close()
+
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	//TODO: call method
+
+	err = idlprovider.AddIDL(req)
+	if err != nil {
+		c.String(consts.StatusInternalServerError, err.Error())
+		return
+	}
 
 	resp := new(idlmanager.ManageServiceResp)
 
@@ -46,16 +54,22 @@ func ChangeIDL(ctx context.Context, c *app.RequestContext) {
 	httpReq, err := adaptor.GetCompatRequest(&c.Request)
 
 	req.Name = httpReq.FormValue("svcname")
+
 	idlFile, _, err := httpReq.FormFile("idlfile")
-	defer idlFile.Close()
+
 	req.FileContent, err = io.ReadAll(idlFile)
+	idlFile.Close()
 
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	idlprovider.ChangeIDL(req.Name, req.FileContent)
+	err = idlprovider.ChangeIDL(req)
+	if err != nil {
+		c.String(consts.StatusInternalServerError, err.Error())
+		return
+	}
 
 	resp := new(idlmanager.ManageServiceResp)
 
@@ -73,8 +87,11 @@ func DeleteIDL(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	//TODO: call method
-
+	err = idlprovider.DeleteIDL(req)
+	if err != nil {
+		c.String(consts.StatusInternalServerError, err.Error())
+		return
+	}
 	resp := new(idlmanager.ManageServiceResp)
 
 	c.JSON(consts.StatusOK, resp)

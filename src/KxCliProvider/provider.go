@@ -49,6 +49,8 @@ func GetGenericCli(svcName string) genericclient.Client {
 
 		p, err := generic.NewThriftContentProvider(idlprovider.IdlContents[idlPath], idlprovider.IdlContents)
 
+		idlprovider.IdlProviders[svcName] = p
+
 		if err != nil {
 			panic(err)
 		}
