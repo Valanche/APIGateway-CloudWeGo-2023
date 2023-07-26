@@ -35,7 +35,7 @@ func ForwardPOST(ctx context.Context, c *app.RequestContext) {
 		panic(err)
 	}
 
-	cli := kxcliprovider.GetGenericCli(serviceName)
+	cli := kxcliprovider.GetGenericCliFromCliPool(serviceName)
 
 	reqJson, err := json.Marshal(tReq.Body)
 	if err != nil {
