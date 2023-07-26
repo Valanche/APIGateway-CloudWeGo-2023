@@ -1,5 +1,7 @@
 go 1.20
 
-use ./cmd
-
-use ./tests
+use (
+	./cmd
+	./tests
+	./tests/svcs/kitex.demo
+)
