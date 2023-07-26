@@ -3,11 +3,14 @@ package kxcliprovider
 import (
 	idlprovider "apigateway/IDLProvider"
 	"sync"
+	"time"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/connpool"
 	"github.com/cloudwego/kitex/pkg/generic"
+	"github.com/cloudwego/kitex/pkg/loadbalance"
+	"github.com/cloudwego/kitex/pkg/loadbalance/lbcache"
 	etcd "github.com/kitex-contrib/registry-etcd"
 	//ruleBasedResolver "github.com/kitex-contrib/resolver-rule-based"
 )
@@ -50,13 +53,14 @@ func GetGenericCli(svcName string) genericclient.Client {
 		// r = ruleBasedResolver.NewRuleBasedResolver(r, filterRule)
 
 		opts = append(opts, client.WithResolver(r))
+
 		// IMPROVEMENTZ: longer time
-		// opts = append(opts, client.WithLoadBalancer(
-		// 	loadbalance.NewWeightedRandomBalancer(),
-		// 	&lbcache.Options{
-		// 		RefreshInterval: 30 * time.Second,
-		// 		ExpireInterval:  60 * time.Second,
-		// 	}))
+		opts = append(opts, client.WithLoadBalancer(
+			loadbalance.NewWeightedRandomBalancer(),
+			&lbcache.Options{
+				RefreshInterval: 30 * time.Second,
+				ExpireInterval:  60 * time.Second,
+			}))
 
 		p, err := generic.NewThriftContentProvider(idlprovider.IdlContents[idlPath], idlprovider.IdlContents)
 
@@ -140,6 +144,5 @@ func GetGenericCliFromCliPool(svcName string) genericclient.Client {
 	defer mutex.Unlock()
 	ret := gCliPool[svcName][gCliCount[svcName]]
 	gCliCount[svcName] = (gCliCount[svcName] + 1) % 10
-	// fmt.Printf("gCliCount[svcName]: %v\n", gCliCount[svcName])
 	return *ret
 }
