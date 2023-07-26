@@ -6,6 +6,9 @@ import (
 	"math/rand"
 	"net"
 
+	"net/http"
+	_ "net/http/pprof" // injecting routing into http
+
 	"github.com/cloudwego/kitex/pkg/generic"
 	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -16,6 +19,8 @@ import (
 )
 
 func main() {
+	go http.ListenAndServe("localhost:8082", nil)
+
 	handler := new(StudentServiceImpl)
 	handler.InitDB()
 

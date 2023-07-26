@@ -4,6 +4,8 @@ package main
 
 import (
 	idlprovider "apigateway/IDLProvider"
+	"net/http"
+	_ "net/http/pprof" // injecting routing into http
 
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
@@ -12,6 +14,8 @@ var idlDirPath = "./idl"
 var svcPath = idlDirPath + "/svcPath"
 
 func main() {
+	go http.ListenAndServe("localhost:8083", nil)
+
 	h := server.Default()
 
 	register(h)
