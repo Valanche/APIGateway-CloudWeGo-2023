@@ -44,6 +44,33 @@ The output should be:
 ```
 {"message":"pong"}
 ```
+### (Optional) 6 - Start the test service
+```
+cd APIGateway-CloudWeGo-2023/tests/svcs/kitex.demo
+go run .
+```
+This starts a test service. You can use the following commands to access the service through the gateway and see the result:
+```
+curl --request GET 'http://localhost:8888/api/kitex.demo/Query?id=1'
+```
+```
+curl --request POST 'http://localhost:8888/api/kitex.demo/Register' -d '{
+    "sex": "non-binary",
+    "college": {
+        "address": "nowhere",
+        "name": "noname3"
+    },
+    "email": [
+        "noname2@nohost.com"
+    ],
+    "id": 1,
+    "name": "noname1"
+}'
+```
+```
+curl --request GET 'http://localhost:8888/api/kitex.demo/Query?id=1'
+```
+For more info please refer to the idl file.
 
 ## Use
 
@@ -79,7 +106,7 @@ For example, I have a service named "kitex.demo",
 and it's idl file is "./idl/kxServer.thrift".
 
 so there should be a line "kitex.demo, ./idl/kxServer.thrift" in the file "svcpath".
-### Requests
+### Requests URL
 Requests should be sent to :
 ```
 $gatewayAddress:8888/api/$serviceName/$methodName

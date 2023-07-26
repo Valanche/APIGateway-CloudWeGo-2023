@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"gorm.io/driver/postgres"
+	sqlite "gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -81,11 +81,8 @@ func (s *StudentServiceImpl) Query(ctx context.Context, req *serverz.QueryReq) (
 }
 
 func (s *StudentServiceImpl) InitDB() {
-	dsn := "host=124.221.127.200 user=backend password=backend dbname=l23o6 port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		SkipDefaultTransaction: true,
-	})
+	db, err := gorm.Open(sqlite.Open("foo.db"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
