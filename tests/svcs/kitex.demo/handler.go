@@ -2,50 +2,33 @@ package main
 
 import (
 	"context"
-	"day3/kxS/dbdata"
+	"day3/kxS/dao"
 	serverz "day3/kxS/kitex_gen/kitex/serverZ"
 	"encoding/json"
 	"fmt"
-	"strings"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 // StudentServiceImpl implements the last service interface defined in the IDL.
 type StudentServiceImpl struct {
-	dbStu  *gorm.DB
-	dbColl *gorm.DB
+	studentDao dao.StudentDao
 }
 
 // Register implements the StudentServiceImpl interface.
 func (s *StudentServiceImpl) Register(ctx context.Context, student *serverz.Student) (resp *serverz.RegisterResp, err error) {
 
-	studData := dbdata.NewStudent(student)
-	collData := dbdata.NewCollege(student)
-
-	result := s.dbStu.Create(&studData)
-	if result.RowsAffected != 0 {
-		result = s.dbColl.First(&collData, "name = ?", studData.CollegeName)
-		if result.RowsAffected == 0 {
-			result = s.dbColl.Create(&collData)
-		}
-
-	} else {
-		fmt.Println(result.Error.Error())
-	}
+	err = s.studentDao.AddStudent(student)
 
 	respN := serverz.RegisterResp{
 		Success: true,
 		Message: "z",
 	}
 
-	respN.Success = result.RowsAffected > 0
+	respN.Success = err == nil
 
 	if respN.Success {
-		respN.Message = "yes " + studData.Name
+		respN.Message = "yes " + student.Name
 	} else {
-		respN.Message = "no " + studData.Name
+		respN.Message = "no " + student.Name
 	}
 
 	resp = &respN
@@ -55,55 +38,16 @@ func (s *StudentServiceImpl) Register(ctx context.Context, student *serverz.Stud
 // Query implements the StudentServiceImpl interface.
 func (s *StudentServiceImpl) Query(ctx context.Context, req *serverz.QueryReq) (resp *serverz.Student, err error) {
 
-	var studData dbdata.Student
-	var collData dbdata.College
-
 	var stud serverz.Student
 
-	result := s.dbStu.First(&studData, req.Id)
-	if result.RowsAffected != 0 {
-		s.dbColl.First(&collData, "name = ?", studData.CollegeName)
-	} else {
-		result.Error = nil
-	}
-
-	stud.Id = studData.Id
-	stud.Name = studData.Name
-	stud.College = &serverz.College{
-		Name:    collData.Name,
-		Address: collData.Address,
-	}
-	stud.Email = strings.Split(studData.Emails, ",")
-	stud.Sex = studData.Sex
+	stud, err = s.studentDao.GetStudentById(req.Id)
 
 	resp = &stud
 	return
 }
 
 func (s *StudentServiceImpl) InitDB() {
-	dsn := "host=124.221.127.200 user=backend password=backend dbname=l23o6 port=5432 sslmode=disable TimeZone=Asia/Shanghai"
-
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		SkipDefaultTransaction: true,
-	})
-	if err != nil {
-		panic(err)
-	}
-	// drop table
-	db.Migrator().DropTable(dbdata.Student{})
-	db.Migrator().DropTable(dbdata.College{})
-	// create table
-	err = db.Migrator().CreateTable(dbdata.Student{})
-	if err != nil {
-		panic(err)
-	}
-	err = db.Migrator().CreateTable(dbdata.College{})
-	if err != nil {
-		panic(err)
-	}
-
-	s.dbStu = db.Table("students").Session(&gorm.Session{})
-	s.dbColl = db.Table("colleges").Session(&gorm.Session{})
+	s.studentDao.InitDB()
 }
 
 func (s *StudentServiceImpl) GenericCall(ctx context.Context, method string, request interface{}) (response interface{}, err error) {
