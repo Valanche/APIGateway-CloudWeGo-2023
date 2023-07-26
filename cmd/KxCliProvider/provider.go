@@ -2,6 +2,7 @@ package kxcliprovider
 
 import (
 	idlprovider "apigateway/IDLProvider"
+	"sync"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/genericclient"
@@ -80,4 +81,64 @@ func GetGenericCli(svcName string) genericclient.Client {
 
 	return *gClis[svcName]
 
+}
+
+var gCliCount = make(map[string]int)
+var gCliPool = make(map[string][10]*genericclient.Client)
+var mutex sync.Mutex
+
+func GetGenericCliFromCliPool(svcName string) genericclient.Client {
+
+	idlPath := idlprovider.GetIdlPath(svcName)
+
+	if _, ok := gCliPool[svcName]; !ok {
+		mutex.Lock()
+		defer mutex.Unlock()
+		var arr [10]*genericclient.Client
+		gCliPool[svcName] = arr
+		gCliCount[svcName] = 1
+		var cli genericclient.Client
+
+		for i := 0; i < 10; i++ {
+			var opts []client.Option
+
+			opts = append(opts, client.WithLongConnection(connpool.IdleConfig{MinIdlePerAddress: 10,
+				MaxIdlePerAddress: 1000}))
+
+			r, _ := etcd.NewEtcdResolver(etcdEndPoints)
+
+			opts = append(opts, client.WithResolver(r))
+
+			p, err := generic.NewThriftContentProvider(idlprovider.IdlContents[idlPath], idlprovider.IdlContents)
+
+			idlprovider.IdlProviders[svcName] = p
+
+			if err != nil {
+				panic(err)
+			}
+
+			g, err := generic.JSONThriftGeneric(p)
+			if err != nil {
+				panic(err)
+			}
+
+			cli, err = genericclient.NewClient(svcName, g, opts...)
+
+			if err != nil {
+				panic(err)
+			}
+			pool := gCliPool[svcName]
+			pool[i] = &cli
+			gCliPool[svcName] = pool
+
+		}
+		return cli
+	}
+
+	mutex.Lock()
+	defer mutex.Unlock()
+	ret := gCliPool[svcName][gCliCount[svcName]]
+	gCliCount[svcName] = (gCliCount[svcName] + 1) % 10
+	// fmt.Printf("gCliCount[svcName]: %v\n", gCliCount[svcName])
+	return *ret
 }
