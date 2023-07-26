@@ -22,7 +22,7 @@ var gClis = make(map[string]*genericclient.Client)
 
 func GetGenericCli(svcName string) genericclient.Client {
 
-	idlPath := idlprovider.IdlPaths[svcName]
+	idlPath := idlprovider.GetIdlPath(svcName)
 
 	if gClis[svcName] == nil {
 		var opts []client.Option

@@ -150,3 +150,12 @@ func WatchIDLFiles(idlDirPath string) {
 		}
 	}
 }
+
+func GetIdlPath(svcName string) string {
+	if path, ok := IdlPaths[svcName]; ok {
+		return path
+	} else {
+
+		return ""
+	}
+}

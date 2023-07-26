@@ -5,10 +5,11 @@ go 1.20
 require (
 	github.com/cloudwego/hertz v0.6.6
 	github.com/cloudwego/kitex v0.6.1
+	github.com/valyala/fastjson v1.6.4
 )
 
 require (
-	github.com/apache/thrift v0.13.0 // direct
+	github.com/apache/thrift v0.13.0 // indirect; direct
 	github.com/chenzhuoyu/iasm v0.0.0-20230222070914-0b1b64b0e762 // indirect
 	github.com/choleraehyq/pid v0.0.16 // indirect
 	github.com/cloudwego/configmanager v0.2.0 // indirect
@@ -49,12 +50,11 @@ require (
 	github.com/henrylee2cn/ameda v1.4.10 // indirect
 	github.com/henrylee2cn/goutil v0.0.0-20210127050712-89660552f6f8 // indirect
 	github.com/kitex-contrib/registry-etcd v0.1.0
-	github.com/kitex-contrib/resolver-rule-based v0.0.0-20230309083851-0fc32c3edcd9
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
-	github.com/tidwall/gjson v1.13.0 // indirect
+	github.com/tidwall/gjson v1.14.4 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
-	github.com/tidwall/pretty v1.2.0 // indirect
+	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	golang.org/x/arch v0.2.0 // indirect
 	golang.org/x/sys v0.0.0-20220817070843-5a390386f1f2 // indirect
