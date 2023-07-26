@@ -50,6 +50,7 @@ func GetGenericCli(svcName string) genericclient.Client {
 		// r = ruleBasedResolver.NewRuleBasedResolver(r, filterRule)
 
 		opts = append(opts, client.WithResolver(r))
+		// IMPROVEMENTZ: longer time
 		// opts = append(opts, client.WithLoadBalancer(
 		// 	loadbalance.NewWeightedRandomBalancer(),
 		// 	&lbcache.Options{

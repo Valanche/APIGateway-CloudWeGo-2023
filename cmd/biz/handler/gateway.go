@@ -47,6 +47,7 @@ func ForwardPOST(ctx context.Context, c *app.RequestContext) {
 		panic(err)
 	}
 
+	// IMPROVEMENTZ : get body directly
 	// reqS := string(c.Request.Body())
 	// if err != nil {
 	// 	panic(err)
@@ -103,6 +104,8 @@ func ForwardGET(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		panic(err)
 	}
+	//IMPROVEMENTZ: send string directly
+	//c.String(consts.StatusOK, resp.(string))
 
 	c.JSON(consts.StatusOK, respStruct)
 }

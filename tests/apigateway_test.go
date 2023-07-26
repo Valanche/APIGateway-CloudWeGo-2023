@@ -2,9 +2,11 @@ package tests
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"runtime"
 	"testing"
 	"time"
 
@@ -69,4 +71,111 @@ func TestForwardPOST(t *testing.T) {
 	fmt.Println(string(body))
 	assert.Equal(t, payload, string(body))
 
+}
+
+func BenchmarkStudentService(b *testing.B) {
+	for i := 1; i < b.N; i++ {
+		newStu := genStudent(i)
+		_, err := register(newStu)
+		Assert(b, err == nil, err)
+
+		stu, err := query(i)
+		Assert(b, err == nil, err)
+		Assert(b, stu["name"] == newStu["name"], newStu["id"], stu["name"], newStu["name"])
+	}
+}
+
+func BenchmarkStudentServiceParallel(b *testing.B) {
+	runtime.GOMAXPROCS(8)
+	i := 1
+	b.RunParallel(func(pb *testing.PB) {
+
+		for pb.Next() {
+			j := i
+			newStu := genStudent(j)
+			_, err := register(newStu)
+			Assert(b, err == nil, err)
+
+			stu, err := query(j)
+			Assert(b, err == nil, err)
+			Assert(b, stu["name"] == newStu["name"], newStu["id"], stu["name"], newStu["name"])
+
+			i++
+		}
+	})
+
+}
+
+func genStudent(id int) map[string]interface{} {
+	return map[string]interface{}{
+		"id":   id,
+		"name": fmt.Sprintf("student-%d", id),
+		"sex":  fmt.Sprintf("sex-%d", id),
+		"college": map[string]interface{}{
+			"address": fmt.Sprintf("adr-%d", id),
+			"name":    fmt.Sprintf("college-%d", id),
+		},
+		"email": []string{
+			fmt.Sprintf("email-%d", id),
+		},
+	}
+}
+
+func register(stu map[string]interface{}) (rResp map[string]interface{}, err error) {
+	reqBody, err := json.Marshal(stu)
+	if err != nil {
+		return nil, fmt.Errorf("marshal request failed: err=%v", err)
+	}
+	var resp *http.Response
+	req, err := http.NewRequest(http.MethodPost, registerURL, bytes.NewBuffer(reqBody))
+	resp, err = httpCli.Do(req)
+	if err != nil {
+		return
+	}
+	var body []byte
+	if body, err = ioutil.ReadAll(resp.Body); err != nil {
+		return
+	}
+	resp.Body.Close()
+
+	if err = json.Unmarshal(body, &rResp); err != nil {
+		return
+	}
+	return
+}
+
+func query(id int) (student map[string]interface{}, err error) {
+	var resp *http.Response
+	resp, err = httpCli.Get(fmt.Sprint(queryURLFmt, id))
+	defer resp.Body.Close()
+	if err != nil {
+		return
+	}
+	var body []byte
+	if body, err = ioutil.ReadAll(resp.Body); err != nil {
+		return
+	}
+
+	if err = json.Unmarshal(body, &student); err != nil {
+		return
+	}
+	return
+}
+
+func Assert(t testingTB, cond bool, val ...interface{}) {
+	t.Helper()
+	if !cond {
+		if len(val) > 0 {
+			val = append([]interface{}{"assertion failed:"}, val...)
+			t.Fatal(val...)
+		} else {
+			t.Fatal("assertion failed")
+		}
+	}
+}
+
+type testingTB interface {
+	Fatal(args ...interface{})
+	Fatalf(format string, args ...interface{})
+	Helper()
 }
