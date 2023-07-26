@@ -11,6 +11,12 @@ import (
 	//ruleBasedResolver "github.com/kitex-contrib/resolver-rule-based"
 )
 
+var etcdEndPoints = []string{
+	// configure your etcd address here
+	// "YOUR_ETCD_ADDRESS_HERE",
+	"localhost:2379",
+}
+
 // svcname : *cli
 var gClis = make(map[string]*genericclient.Client)
 
@@ -24,7 +30,7 @@ func GetGenericCli(svcName string) genericclient.Client {
 		opts = append(opts, client.WithLongConnection(connpool.IdleConfig{MinIdlePerAddress: 10,
 			MaxIdlePerAddress: 1000}))
 
-		r, _ := etcd.NewEtcdResolver([]string{"localhost:2379"})
+		r, _ := etcd.NewEtcdResolver(etcdEndPoints)
 
 		// filterFunc := func(ctx context.Context, instance []discovery.Instance) []discovery.Instance {
 		// 	var res []discovery.Instance
