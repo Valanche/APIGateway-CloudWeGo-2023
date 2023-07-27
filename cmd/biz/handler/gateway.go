@@ -11,7 +11,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/generic"
-	"github.com/tidwall/gjson"
 )
 
 func NewGenericClient(destServiceName string) genericclient.Client {
@@ -21,7 +20,7 @@ func NewGenericClient(destServiceName string) genericclient.Client {
 
 func ForwardPOST(ctx context.Context, c *app.RequestContext) {
 	var err error
-	// var respStruct = make(map[string]interface{})
+	var respStruct = make(map[string]interface{})
 
 	serviceName := c.Param("svc")
 	methodName := c.Param("method")
@@ -35,7 +34,7 @@ func ForwardPOST(ctx context.Context, c *app.RequestContext) {
 		panic(err)
 	}
 
-	cli := kxcliprovider.GetGenericCliFromCliPool(serviceName)
+	cli := kxcliprovider.GetGenericCli(serviceName)
 
 	reqJson, err := json.Marshal(tReq.Body)
 	if err != nil {
@@ -58,15 +57,13 @@ func ForwardPOST(ctx context.Context, c *app.RequestContext) {
 	// 	panic(err)
 	// }
 
-	m, _ := gjson.Parse(resp.(string)).Value().(map[string]interface{})
-
-	// err = json.Unmarshal([]byte(resp.(string)), &respStruct)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	err = json.Unmarshal([]byte(resp.(string)), &respStruct)
+	if err != nil {
+		panic(err)
+	}
 	// fmt.Printf("m: %v\n", m)
 
-	c.JSON(consts.StatusOK, m)
+	c.JSON(consts.StatusOK, respStruct)
 }
 
 func ForwardGET(ctx context.Context, c *app.RequestContext) {
