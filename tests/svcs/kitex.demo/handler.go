@@ -2,33 +2,50 @@ package main
 
 import (
 	"context"
-	"day3/kxS/dao"
+	"day3/kxS/dbdata"
 	serverz "day3/kxS/kitex_gen/kitex/serverZ"
 	"encoding/json"
 	"fmt"
+	"strings"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 // StudentServiceImpl implements the last service interface defined in the IDL.
 type StudentServiceImpl struct {
-	studentDao dao.StudentDao
+	dbStu  *gorm.DB
+	dbColl *gorm.DB
 }
 
 // Register implements the StudentServiceImpl interface.
 func (s *StudentServiceImpl) Register(ctx context.Context, student *serverz.Student) (resp *serverz.RegisterResp, err error) {
 
-	err = s.studentDao.AddStudent(student)
+	studData := dbdata.NewStudent(student)
+	collData := dbdata.NewCollege(student)
+
+	result := s.dbStu.Create(&studData)
+	if result.RowsAffected != 0 {
+		result = s.dbColl.First(&collData, "name = ?", studData.CollegeName)
+		if result.RowsAffected == 0 {
+			result = s.dbColl.Create(&collData)
+		}
+
+	} else {
+		fmt.Println(result.Error.Error())
+	}
 
 	respN := serverz.RegisterResp{
 		Success: true,
 		Message: "z",
 	}
 
-	respN.Success = err == nil
+	respN.Success = result.RowsAffected > 0
 
 	if respN.Success {
-		respN.Message = "yes " + student.Name
+		respN.Message = "yes " + studData.Name
 	} else {
-		respN.Message = "no " + student.Name
+		respN.Message = "no " + studData.Name
 	}
 
 	resp = &respN
@@ -38,16 +55,51 @@ func (s *StudentServiceImpl) Register(ctx context.Context, student *serverz.Stud
 // Query implements the StudentServiceImpl interface.
 func (s *StudentServiceImpl) Query(ctx context.Context, req *serverz.QueryReq) (resp *serverz.Student, err error) {
 
+	var studData dbdata.Student
+	var collData dbdata.College
+
 	var stud serverz.Student
 
-	stud, err = s.studentDao.GetStudentById(req.Id)
+	result := s.dbStu.First(&studData, req.Id)
+	if result.RowsAffected != 0 {
+		s.dbColl.First(&collData, "name = ?", studData.CollegeName)
+	} else {
+		result.Error = nil
+	}
+
+	stud.Id = studData.Id
+	stud.Name = studData.Name
+	stud.College = &serverz.College{
+		Name:    collData.Name,
+		Address: collData.Address,
+	}
+	stud.Email = strings.Split(studData.Emails, ",")
+	stud.Sex = studData.Sex
 
 	resp = &stud
 	return
 }
 
 func (s *StudentServiceImpl) InitDB() {
-	s.studentDao.InitDB()
+	db, err := gorm.Open(sqlite.Open("foo.db"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	// drop table
+	db.Migrator().DropTable(dbdata.Student{})
+	db.Migrator().DropTable(dbdata.College{})
+	// create table
+	err = db.Migrator().CreateTable(dbdata.Student{})
+	if err != nil {
+		panic(err)
+	}
+	err = db.Migrator().CreateTable(dbdata.College{})
+	if err != nil {
+		panic(err)
+	}
+
+	s.dbStu = db.Table("students").Session(&gorm.Session{})
+	s.dbColl = db.Table("colleges").Session(&gorm.Session{})
 }
 
 func (s *StudentServiceImpl) GenericCall(ctx context.Context, method string, request interface{}) (response interface{}, err error) {

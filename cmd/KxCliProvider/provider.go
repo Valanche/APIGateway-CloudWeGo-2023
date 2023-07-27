@@ -118,7 +118,7 @@ func GetGenericCliFromCliPool(svcName string) genericclient.Client {
 				loadbalance.NewWeightedRandomBalancer(),
 				&lbcache.Options{
 					RefreshInterval: 30 * time.Second,
-					ExpireInterval:  60 * time.Second,
+					ExpireInterval:  40 * time.Second,
 				}))
 
 			p, err := generic.NewThriftContentProvider(idlprovider.IdlContents[idlPath], idlprovider.IdlContents)
