@@ -24,7 +24,7 @@ func ForwardPOST(ctx context.Context, c *app.RequestContext) {
 	serviceName := c.Param("svc")
 	methodName := c.Param("method")
 
-	cli := kxcliprovider.GetGenericCli(serviceName)
+	cli := kxcliprovider.GetGenericCliFromCliPool(serviceName)
 
 	reqS := string(c.Request.Body())
 	if err != nil {
@@ -52,7 +52,7 @@ func ForwardGET(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	cli := kxcliprovider.GetGenericCli(serviceName)
+	cli := kxcliprovider.GetGenericCliFromCliPool(serviceName)
 
 	//TODO: fit multi value for one param
 	for k, v := range httpReq.URL.Query() {
@@ -65,7 +65,7 @@ func ForwardGET(ctx context.Context, c *app.RequestContext) {
 		panic(err)
 	}
 
-	resp, err := cli.GenericCall(ctx, methodName, string(jsonS))
+	resp, err := cli.GenericCall(ctx, methodName, jsonS)
 	if err != nil {
 		panic(err)
 	}
