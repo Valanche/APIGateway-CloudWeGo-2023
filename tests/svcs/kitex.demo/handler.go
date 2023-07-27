@@ -18,11 +18,22 @@ type StudentServiceImpl struct {
 	dbColl *gorm.DB
 }
 
+var memS = make(map[int32]*serverz.Student)
+
 // Register implements the StudentServiceImpl interface.
 func (s *StudentServiceImpl) Register(ctx context.Context, student *serverz.Student) (resp *serverz.RegisterResp, err error) {
 
 	studData := dbdata.NewStudent(student)
 	collData := dbdata.NewCollege(student)
+	if _, ok := memS[student.Id]; ok {
+		respN := serverz.RegisterResp{
+			Success: true,
+			Message: "no " + studData.Name,
+		}
+		return &respN, nil
+	}
+
+	memS[student.Id] = student
 
 	result := s.dbStu.Create(&studData)
 	if result.RowsAffected != 0 {
@@ -37,7 +48,7 @@ func (s *StudentServiceImpl) Register(ctx context.Context, student *serverz.Stud
 
 	respN := serverz.RegisterResp{
 		Success: true,
-		Message: "z",
+		Message: "no " + studData.Name,
 	}
 
 	respN.Success = result.RowsAffected > 0
@@ -49,11 +60,17 @@ func (s *StudentServiceImpl) Register(ctx context.Context, student *serverz.Stud
 	}
 
 	resp = &respN
+
 	return
 }
 
 // Query implements the StudentServiceImpl interface.
 func (s *StudentServiceImpl) Query(ctx context.Context, req *serverz.QueryReq) (resp *serverz.Student, err error) {
+
+	if _, ok := memS[req.Id]; ok {
+		resp = memS[req.Id]
+		return
+	}
 
 	var studData dbdata.Student
 	var collData dbdata.College
@@ -81,7 +98,10 @@ func (s *StudentServiceImpl) Query(ctx context.Context, req *serverz.QueryReq) (
 }
 
 func (s *StudentServiceImpl) InitDB() {
-	db, err := gorm.Open(sqlite.Open("foo.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("foo.db"), &gorm.Config{
+		SkipDefaultTransaction: true,
+		PrepareStmt:            true,
+	})
 	if err != nil {
 		panic(err)
 	}
