@@ -26,8 +26,6 @@ var gClis = make(map[string]*genericclient.Client)
 
 func GetGenericCli(svcName string) genericclient.Client {
 
-	idlPath := idlprovider.GetIdlPath(svcName)
-
 	if gClis[svcName] == nil {
 		var opts []client.Option
 
@@ -62,7 +60,7 @@ func GetGenericCli(svcName string) genericclient.Client {
 				ExpireInterval:  60 * time.Second,
 			}))
 
-		p, err := generic.NewThriftContentProvider(idlprovider.IdlContents[idlPath], idlprovider.IdlContents)
+		p, err := idlprovider.GetContentProvider(svcName)
 
 		idlprovider.IdlProviders[svcName] = p
 
@@ -94,7 +92,6 @@ var mutex sync.Mutex
 
 func GetGenericCliFromCliPool(svcName string) genericclient.Client {
 
-	idlPath := idlprovider.GetIdlPath(svcName)
 
 	if _, ok := gCliPool[svcName]; !ok {
 		mutex.Lock()
@@ -121,7 +118,7 @@ func GetGenericCliFromCliPool(svcName string) genericclient.Client {
 					ExpireInterval:  40 * time.Second,
 				}))
 
-			p, err := generic.NewThriftContentProvider(idlprovider.IdlContents[idlPath], idlprovider.IdlContents)
+			p, err := idlprovider.GetContentProvider(svcName)
 
 			idlprovider.IdlProviders[svcName] = p
 

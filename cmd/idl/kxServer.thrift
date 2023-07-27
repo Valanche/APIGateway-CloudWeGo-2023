@@ -29,3 +29,5 @@ service StudentService {
     RegisterResp Register(1: Student student) (api.post="/add-student-info");
     Student Query(1: QueryReq req) (api.get="/query");
 }
+
+

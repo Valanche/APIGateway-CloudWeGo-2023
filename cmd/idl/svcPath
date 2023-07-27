@@ -1,1 +1,2 @@
 kitex.demo, ./idl/kxServer.thrift
+kitex.test1, ./idl/kxTest1.thrift

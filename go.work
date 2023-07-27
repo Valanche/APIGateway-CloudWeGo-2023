@@ -4,4 +4,5 @@ use (
 	./cmd
 	./tests
 	./tests/svcs/kitex.demo
+	./tests/svcs/kitex.test1
 )

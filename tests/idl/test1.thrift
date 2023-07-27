@@ -1,4 +1,4 @@
-  mespace go test.tft1
+namespace go test.tft1
 
 struct T1 {
     1: string name,
