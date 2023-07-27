@@ -67,7 +67,7 @@ func (dao *StudentDao) GetStudentById(id int32) (serverz.Student, error) {
 	student = serverz.NewStudent()
 
 	student.Id = studData.Id
-	student.Name = "studData.Name"
+	student.Name = studData.Name
 	student.College = &serverz.College{
 		Name:    collData.Name,
 		Address: collData.Address,

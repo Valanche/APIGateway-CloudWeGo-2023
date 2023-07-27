@@ -73,7 +73,7 @@ func (s *StudentServiceImpl) GenericCall(ctx context.Context, method string, req
 	}
 
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	byteResp, err := json.Marshal(response)

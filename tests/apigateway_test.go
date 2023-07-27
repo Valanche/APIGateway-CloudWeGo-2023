@@ -109,14 +109,14 @@ func BenchmarkStudentServiceParallel(b *testing.B) {
 func genStudent(id int) map[string]interface{} {
 	return map[string]interface{}{
 		"id":   id,
-		"name": fmt.Sprintf("student-%d", id),
-		"sex":  fmt.Sprintf("sex-%d", id),
+		"name": fmt.Sprintf("student%d", id),
+		"sex":  fmt.Sprintf("sex%d", id),
 		"college": map[string]interface{}{
-			"address": fmt.Sprintf("adr-%d", id),
-			"name":    fmt.Sprintf("college-%d", id),
+			"address": fmt.Sprintf("adr%d", id),
+			"name":    fmt.Sprintf("college%d", id),
 		},
 		"email": []string{
-			fmt.Sprintf("email-%d", id),
+			fmt.Sprintf("email%d", id),
 		},
 	}
 }
