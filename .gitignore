@@ -1,8 +1,10 @@
 .idea
 default.etcd
 cmd/apigateway
+idl_manager/idl_manager
 
 tests/svcs/kitex.demo/output
+test/svcs/kitex.demo/foo.db
 *.o
 *.a
 *.so

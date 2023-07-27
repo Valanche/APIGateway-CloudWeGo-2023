@@ -11,3 +11,6 @@ test1:
 
 hertz:
 	cd cmd && go build -o ./${BinaryName} && exec ./${BinaryName}
+
+idlManager:
+	cd idl_manager && go build -o ./idl_manager && exec ./idl_manager

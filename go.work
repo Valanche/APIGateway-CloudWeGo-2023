@@ -5,4 +5,5 @@ use (
 	./tests
 	./tests/svcs/kitex.demo
 	./tests/svcs/kitex.test1
+	./idl_manager
 )
