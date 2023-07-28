@@ -4,6 +4,7 @@ etcd:
 	etcd --log-level debug
 
 kitex:
+	rm tests/svcs/kitex.demo/foo.db
 	cd tests/svcs/kitex.demo && chmod +x build.sh && ./build.sh && ./output/bootstrap.sh
 
 test1:

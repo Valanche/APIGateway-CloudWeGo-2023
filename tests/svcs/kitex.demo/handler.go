@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -67,10 +67,10 @@ func (s *StudentServiceImpl) Register(ctx context.Context, student *serverz.Stud
 // Query implements the StudentServiceImpl interface.
 func (s *StudentServiceImpl) Query(ctx context.Context, req *serverz.QueryReq) (resp *serverz.Student, err error) {
 
-	// if _, ok := memS[req.Id]; ok {
-	// 	resp = memS[req.Id]
-	// 	return
-	// }
+	if _, ok := memS[req.Id]; ok {
+		resp = memS[req.Id]
+		return
+	}
 
 	var studData dbdata.Student
 	var collData dbdata.College
@@ -99,17 +99,17 @@ func (s *StudentServiceImpl) Query(ctx context.Context, req *serverz.QueryReq) (
 
 func (s *StudentServiceImpl) InitDB() {
 
-	dsn := "host=124.221.127.200 user=backend password=backend dbname=l23o6 port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	// dsn := "host=124.221.127.200 user=backend password=backend dbname=l23o6 port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		SkipDefaultTransaction: true,
-		PrepareStmt:            true,
-	})
-
-	// db, err := gorm.Open(sqlite.Open("foo.db"), &gorm.Config{
+	// db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 	// 	SkipDefaultTransaction: true,
 	// 	PrepareStmt:            true,
 	// })
+
+	db, err := gorm.Open(sqlite.Open("foo.db"), &gorm.Config{
+		SkipDefaultTransaction: true,
+		PrepareStmt:            true,
+	})
 	if err != nil {
 		panic(err)
 	}
