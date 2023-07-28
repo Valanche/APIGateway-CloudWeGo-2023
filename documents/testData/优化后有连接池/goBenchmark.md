@@ -1,4 +1,5 @@
-# 测试文档
+# 测试结果-优化后有连接池
+
 ## go benchmark 串行
 
 goos: linux
@@ -173,15 +174,5 @@ testing: BenchmarkStudentServiceParallel-16 left GOMAXPROCS set to 8
 PASS
 ok  	tests	1.175s
 
-## JMeter
-### 10 thread
-Label	# Samples	Average	Median	90% Line	95% Line	99% Line	Min	Max	Error %	Throughput	Received KB/sec	Sent KB/sec
-HTTP Request	804587	0	1	1	1	2	0	168	0.00%	13423.65444	2241.65	4378.42
-TOTAL	804587	0	1	1	1	2	0	168	0.00%	13423.65444	2241.65	4378.42
-
-### 100 thread
-Label	# Samples	Average	Median	90% Line	95% Line	99% Line	Min	Max	Error %	Throughput	Received KB/sec	Sent KB/sec
-HTTP Request	1257059	4	4	8	9	15	0	183	0.00%	20969.1566	3501.69	6839.55
-TOTAL	1257059	4	4	8	9	15	0	183	0.00%	20969.1566	3501.69	6839.55
 
 
