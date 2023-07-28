@@ -24,7 +24,7 @@ func ForwardPOST(ctx context.Context, c *app.RequestContext) {
 	serviceName := c.Param("svc")
 	methodName := c.Param("method")
 
-	cli := kxcliprovider.GetGenericCli(serviceName)
+	cli := kxcliprovider.GetGenericCliFromCliPool(serviceName)
 
 	reqS := string(c.Request.Body())
 	if err != nil {

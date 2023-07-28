@@ -1,0 +1,64 @@
+Showing top 10 nodes out of 225
+      flat  flat%   sum%        cum   cum%
+   12340ms 27.67% 27.67%    12340ms 27.67%  runtime/internal/syscall.Syscall6
+    2690ms  6.03% 33.71%     2690ms  6.03%  runtime.futex
+     890ms  2.00% 35.70%      890ms  2.00%  runtime.nextFreeFast (inline)
+     870ms  1.95% 37.65%     1100ms  2.47%  runtime.step
+     740ms  1.66% 39.31%     2220ms  4.98%  runtime.pcvalue
+     620ms  1.39% 40.70%     3860ms  8.66%  runtime.mallocgc
+     560ms  1.26% 41.96%      560ms  1.26%  runtime.memmove
+     540ms  1.21% 43.17%     4460ms 10.00%  runtime.gentraceback
+     530ms  1.19% 44.36%      580ms  1.30%  runtime.findfunc
+     520ms  1.17% 45.53%      520ms  1.17%  runtime.memclrNoHeapPointers
+
+Showing top 10 nodes out of 232
+      flat  flat%   sum%        cum   cum%
+   12080ms 25.51% 25.51%    12080ms 25.51%  runtime/internal/syscall.Syscall6
+    2490ms  5.26% 30.77%     2490ms  5.26%  runtime.futex
+    1120ms  2.37% 33.14%     1420ms  3.00%  runtime.step
+     860ms  1.82% 34.95%     4330ms  9.14%  runtime.mallocgc
+     850ms  1.80% 36.75%      850ms  1.80%  runtime.nextFreeFast (inline)
+     730ms  1.54% 38.29%     2510ms  5.30%  runtime.pcvalue
+     720ms  1.52% 39.81%     5460ms 11.53%  runtime.gentraceback
+     590ms  1.25% 41.06%      590ms  1.25%  runtime.memmove
+     560ms  1.18% 42.24%      610ms  1.29%  runtime.writeHeapBits.flush
+     510ms  1.08% 43.32%     1890ms  3.99%  runtime.(*stkframe).getStackMap
+
+Showing top 10 nodes out of 220
+      flat  flat%   sum%        cum   cum%
+    11.17s 26.23% 26.23%     11.17s 26.23%  runtime/internal/syscall.Syscall6
+     2.35s  5.52% 31.75%      2.35s  5.52%  runtime.futex
+     0.87s  2.04% 33.80%      1.15s  2.70%  runtime.step
+     0.79s  1.86% 35.65%      2.28s  5.35%  runtime.pcvalue
+     0.78s  1.83% 37.48%      3.46s  8.13%  runtime.mallocgc
+     0.74s  1.74% 39.22%      0.74s  1.74%  runtime.nextFreeFast (inline)
+     0.46s  1.08% 40.30%      0.50s  1.17%  runtime.findfunc
+     0.43s  1.01% 41.31%      4.36s 10.24%  runtime.gentraceback
+     0.41s  0.96% 42.27%      1.87s  4.39%  runtime.(*stkframe).getStackMap
+     0.40s  0.94% 43.21%      0.40s  0.94%  runtime.(*itabTableType).find
+
+Showing top 10 nodes out of 226
+      flat  flat%   sum%        cum   cum%
+   11530ms 24.75% 24.75%    11530ms 24.75%  runtime/internal/syscall.Syscall6
+    2600ms  5.58% 30.33%     2600ms  5.58%  runtime.futex
+    1270ms  2.73% 33.06%     1550ms  3.33%  runtime.step
+    1140ms  2.45% 35.51%     2970ms  6.38%  runtime.pcvalue
+    1070ms  2.30% 37.81%     4120ms  8.84%  runtime.mallocgc
+     720ms  1.55% 39.35%      720ms  1.55%  runtime.nextFreeFast (inline)
+     520ms  1.12% 40.47%      530ms  1.14%  runtime.findfunc
+     520ms  1.12% 41.58%     5650ms 12.13%  runtime.gentraceback
+     510ms  1.09% 42.68%     3200ms  6.87%  runtime.adjustframe
+     510ms  1.09% 43.77%      560ms  1.20%  runtime.writeHeapBits.flush
+
+Showing top 10 nodes out of 227
+      flat  flat%   sum%        cum   cum%
+   11790ms 24.60% 24.60%    11790ms 24.60%  runtime/internal/syscall.Syscall6
+    2690ms  5.61% 30.21%     2690ms  5.61%  runtime.futex
+    1110ms  2.32% 32.53%     1390ms  2.90%  runtime.step
+    1080ms  2.25% 34.78%     4160ms  8.68%  runtime.mallocgc
+     820ms  1.71% 36.49%      820ms  1.71%  runtime.nextFreeFast (inline)
+     680ms  1.42% 37.91%     5240ms 10.93%  runtime.gentraceback
+     660ms  1.38% 39.29%     2390ms  4.99%  runtime.pcvalue
+     560ms  1.17% 40.45%      560ms  1.17%  runtime.memclrNoHeapPointers
+     540ms  1.13% 41.58%     3130ms  6.53%  runtime.adjustframe
+     500ms  1.04% 42.62%      510ms  1.06%  runtime.(*itabTableType).find

@@ -1,0 +1,55 @@
+Percentage of the requests served within a certain time (ms)
+  50%      4
+  66%      4
+  75%      5
+  80%      5
+  90%      6
+  95%      7
+  98%      9
+  99%     10
+ 100%    149 (longest request)
+
+Percentage of the requests served within a certain time (ms)
+  50%      4
+  66%      4
+  75%      5
+  80%      5
+  90%      7
+  95%      8
+  98%     10
+  99%     13
+ 100%    399 (longest request)
+
+Percentage of the requests served within a certain time (ms)
+  50%      4
+  66%      4
+  75%      5
+  80%      5
+  90%      6
+  95%      7
+  98%      9
+  99%     11
+ 100%    352 (longest request)
+
+
+Percentage of the requests served within a certain time (ms)
+  50%      4
+  66%      5
+  75%      5
+  80%      6
+  90%      7
+  95%      8
+  98%     10
+  99%     11
+ 100%    337 (longest request)
+
+Percentage of the requests served within a certain time (ms)
+  50%      4
+  66%      5
+  75%      6
+  80%      6
+  90%      8
+  95%      9
+  98%     11
+  99%     12
+ 100%     52 (longest request)
